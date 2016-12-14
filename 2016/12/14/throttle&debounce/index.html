@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>你真的了解函数节流（throttle）和函数去抖（debounce）吗？ | amie</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="http://7xva4j.com1.z0.glb.clouddn.com/avatar.jpg">
+  <link rel="stylesheet" href="/css/app.css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2016/12/14/throttle&debounce/">你真的了解函数节流（throttle）和函数去抖（debounce）吗？</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">十二月 14 2016</p>
+  </section>
+
+  <section class="article-entry">
+    <h3>关于为什么写这篇文章</h3>
+<p>这几天在跟着一个博主的文章看 underscore-1.8.3 的源码，戳<a href="https://github.com/hanzichi/underscore-analysis" target="_blank" rel="external">地址</a>。其它收货暂且不表，看的一些记录开了一个 repo，可以戳<a href="https://github.com/amie0119/underscore-note" target="_blank" rel="external">地址</a>。
+仔细看了文章才发现我一直没搞懂节流和去抖的区别，而是把这些不同的应用场景都归为节流。其实搞懂名词只是其次，重要的是分清应用场景，正确的使用，完成需求。</p>
+<h3>应用场景的区别</h3>
+<h4>throttle</h4>
+<p>节流，从字面意思上来说，可以想象成一个粗的水管收缩直径，让同一时间段通过的水变少了。具体到应用上来说，就是要控制函数调用的频率。在 100ms 里执行一次、两次...这就有了频率的差别。划分的尺度是时间。比如上述文章提到的例子：</p>
+<ul>
+<li>DOM 元素的拖拽功能实现（mousemove）</li>
+<li>射击游戏的 mousedown/keydown 事件（单位时间只能发射一颗子弹）</li>
+<li>搜索联想（keyup）</li>
+</ul>
+<p>这里就不列举全了。</p>
+<h4>debounce</h4>
+<p>去抖，也从字面上讲，就是按住一个弹簧，直到你手拿开弹簧才会弹起。只需要一个有效的操作，其他的“抖动”都是无效的。具体来说，就是会触发连续的函数调用的操作，不管这个操作时间有多长，可能一直在滚动，但只要没有结束滚动，都不会执行函数。比如：</p>
+<ul>
+<li>每次 resize/scroll 触发统计事件</li>
+<li>文本输入的验证（连续输入文字后发送 AJAX 请求进行验证，验证一次就好）</li>
+</ul>
+<p>上面提到的场景比较典型，我也是看着这几个例子体会了一会的。</p>
+<h4>小结</h4>
+<p>单独拿 scroll 做总结，比如说用户滚动页面，监听滚动事件是否加载到底部自动加载更多：如果是 throttle，就是设置一个时间间隔，每隔这么多时间就去检查一次是否到底部了，只要在滚动就会定时触发判断；
+而 debounce 就是只要用户这一次的滚动没有停下，就不会触发判断。</p>
+<h3>如何实现 throttle 和 debounce</h3>
+<h4>throttle</h4>
+<p>如果没有定时器，就设置一个定时器，等到时间执行完了再设置下一个。同样也可以通过时间戳来判断。</p>
+<p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> timeId = <span class="literal">null</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">print</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">"我被触发了"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">throttle</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">if</span> (!timeId) &#123;</div><div class="line">    timeId = setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      print();</div><div class="line">      clearTimeout(timeId);</div><div class="line">      timeId = <span class="literal">null</span>;</div><div class="line">    &#125;, <span class="number">1000</span>);</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="built_in">window</span>.onscroll = throttle;</div></pre></td></tr></table></figure></p>
+<p>underscore 中还支持了是否忽略最开始和结束后的回调。具体戳仓库查看源码。</p>
+<h4>debounce</h4>
+<p>当事件发生时，不会立即激活回调。而是等待一段时间并检查相同的时间是否再次触发，如果再次触发了，证明这次连续的事件没有结束，重置定时器，继续等待。如果这段等待时间没有发生相同的事件，那么就是满足条件激活回调函数。</p>
+<p>简单的例子：
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> timeoutID = <span class="literal">null</span>;</div><div class="line"> </div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">print</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'我被触发了'</span>);</div><div class="line">&#125;</div><div class="line"> </div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">debounce</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  clearTimeout(timeoutID);</div><div class="line">  timeoutID = setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="comment">// 等待并且检查</span></div><div class="line">    print();</div><div class="line">  &#125;, <span class="number">1000</span>);</div><div class="line">&#125;;</div><div class="line"> </div><div class="line"><span class="built_in">window</span>.onscroll = debounce;</div></pre></td></tr></table></figure></p>
+<p>运行可以发现，在你滚动的时候不会有 log，一结束就有了💅🏿</p>
+<p>underscore 里还加了 immediate 这种场景，就是满足触发条件的时候不用延迟立即执行。具体可以戳仓库看实现&amp;注释。</p>
+<p><strong><em>欢迎捉虫~</em></strong></p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="http://7xva4j.com1.z0.glb.clouddn.com/avatar.jpg" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> amie </p>
+      <p class="subtitle"> ...... </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=>关于为什么写这篇文章</h3>
+<p>"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>
