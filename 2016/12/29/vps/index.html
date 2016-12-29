@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>如何在 VPS 搭建自己的 SS 服务器 | amie</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="http://7xva4j.com1.z0.glb.clouddn.com/avatar.jpg">
+  <link rel="stylesheet" href="/css/app.css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2016/12/29/vps/">如何在 VPS 搭建自己的 SS 服务器</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">十二月 29 2016</p>
+  </section>
+
+  <section class="article-entry">
+    <p>以前买买 VPN，蹭蹭别人的服务器，而且公司自带梯子，日常的翻墙需求基本能得到满足，但是从昨天开始突然翻不过去了💩，没排查到原因，干脆自己搭，一劳永逸。</p>
+<h3 id="购买-VPS"><a href="#购买-VPS" class="headerlink" title="购买 VPS"></a>购买 VPS</h3><p>我用的是小伙伴推荐的<a href="http://www.kdatacenter.com/" target="_blank" rel="external">kdatacenter</a>，韩国的，最便宜的一个月19刀。配置如下图</p>
+<p><img src="http://i1.piimg.com/567571/ddb7618a50e29ef9.png" alt=""></p>
+<p>买的时候汇率已经到7了，心很痛，不过小伙伴说速度相当快，体验一下感觉不错，而且支持支付宝付款。付完款之后，2小时内会通过邮件告诉你服务器信息。<br>我的大概20分钟吧。</p>
+<h3 id="安装-shadowsocks"><a href="#安装-shadowsocks" class="headerlink" title="安装 shadowsocks"></a>安装 shadowsocks</h3><p>拿到账户密码之后，通过 ssh 远程连接。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ssh 你的账号@你的服务器IP</div></pre></td></tr></table></figure>
+<p>如果输入地址是正确的话，会有个提示是否继续，yes 就可以了。输入密码，连接成功。</p>
+<p>输入下面的命令，网上搜来的 ss 一键安装包。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">wget --no-check-certificate https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks.sh</div><div class="line"></div><div class="line">chmod +x shadowsocks.sh</div><div class="line"></div><div class="line">./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log</div></pre></td></tr></table></figure>
+<p>中间会有提示要你输入密码、端口，按照自己喜好来就可以了。最后按任意键安装。安装完之后会出现配置信息</p>
+<p><img src="http://i1.piimg.com/567571/2b08477c592456f2.png" alt=""></p>
+<p>然后记下相关信息。</p>
+<h3 id="本机配置-shadowsocks"><a href="#本机配置-shadowsocks" class="headerlink" title="本机配置 shadowsocks"></a>本机配置 shadowsocks</h3><p>mac 用户，下载一个叫 shadowsocksX-NG 的软件，选服务器设置，把刚才保存的相关信息填写上去就可以了。</p>
+<p><img src="http://p1.bqimg.com/567571/0cf2246412594f01.png" alt=""></p>
+<p>保存，打开代理，不出意外就成功啦。</p>
+<h3 id="iOS-配置-shadowsocks"><a href="#iOS-配置-shadowsocks" class="headerlink" title="iOS 配置 shadowsocks"></a>iOS 配置 shadowsocks</h3><p>我用的是 Shadowrocket，好像是5块钱吧，反正同类的能用就行。可以在手机上再填写一遍配置，也可以用 shadowsocksX-NG 生成个服务器设置的二维码，<br>用手机一扫就配置成功啦。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="http://7xva4j.com1.z0.glb.clouddn.com/avatar.jpg" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> amie </p>
+      <p class="subtitle"> ...... </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=以前买买 VPN，蹭蹭别人的服务器，而且"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>
